@@ -133,5 +133,8 @@ Temporary Items
 
 speedtest.db
 .idea/
-speedtest-backend
+.vscode/
 dist/
+speedtest.db
+speedtest-backend
+settings.toml

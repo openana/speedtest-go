@@ -29,17 +29,17 @@ func getRandomData(length int) []byte {
 }
 
 func getIPInfoURL(address string) string {
-	apiKey := config.LoadedConfig().IPInfoAPIKey
+	config := config.LoadedConfig()
 
-	ipInfoURL := `https://ipinfo.io/%s/json`
+	ipInfoURL := config.IPInfoDomain + "/%s/json"
 	if address != "" {
 		ipInfoURL = fmt.Sprintf(ipInfoURL, address)
 	} else {
-		ipInfoURL = "https://ipinfo.io/json"
+		ipInfoURL = config.IPInfoDomain + "/json"
 	}
 
-	if apiKey != "" {
-		ipInfoURL += "?token=" + apiKey
+	if config.IPInfoAPIKey != "" {
+		ipInfoURL += "?token=" + config.IPInfoAPIKey
 	}
 
 	return ipInfoURL

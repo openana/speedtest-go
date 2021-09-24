@@ -11,6 +11,7 @@ type Config struct {
 	ProxyProtocolPort string  `mapstructure:"proxyprotocol_port"`
 	ServerLat         float64 `mapstructure:"server_lat"`
 	ServerLng         float64 `mapstructure:"server_lng"`
+	IPInfoDomain      string  `mapstructure:"ipinfo_domain"`
 	IPInfoAPIKey      string  `mapstructure:"ipinfo_api_key"`
 
 	StatsPassword string `mapstructure:"statistics_password"`
