@@ -27,10 +27,10 @@ import (
 )
 
 const (
-	watermark = "LibreSpeed"
+	watermark = "speed.xjtu.edu.cn"
 
 	labelMS       = " ms"
-	labelMbps     = "Mbit/s"
+	labelMbps     = "Mbps"
 	labelPing     = "Ping"
 	labelJitter   = "Jitter"
 	labelDownload = "Download"

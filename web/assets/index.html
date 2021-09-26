@@ -8,9 +8,11 @@
 <link rel="alternate icon" type="image/png" href="favicon.png">
 <script type="text/javascript" src="speedtest.js"></script>
 <script type="text/javascript">
+var testId=null
 
 //INITIALIZE SPEEDTEST
 var s=new Speedtest(); //create speedtest object
+s.setParameter("telemetry_level","full");
 s.onupdate=function(data){ //callback to update data in UI
     I("ip").textContent=data.clientIp;
     I("dlText").textContent=(data.testState==1&&data.dlStatus==0)?"...":data.dlStatus;
@@ -19,22 +21,36 @@ s.onupdate=function(data){ //callback to update data in UI
     I("jitText").textContent=data.jitterStatus;
     var prog=(Number(data.dlProgress)*2+Number(data.ulProgress)*2+Number(data.pingProgress))/5;
     I("progress").style.width=(100*prog)+"%";
+	testId=data.testId;
 }
 s.onend=function(aborted){ //callback for test ended/aborted
     I("startStopBtn").className=""; //show start button again
     if(aborted){ //if the test was aborted, clear the UI and prepare for new test
 		initUI();
-    }
+    } else {
+		//if testId is present, show sharing panel, otherwise do nothing
+		try{
+			if(testId!=null){
+				var shareURL=window.location.href.substring(0,window.location.href.lastIndexOf("/"))+"/results/?id="+testId;
+				I("resultsImg").src=shareURL;
+				I("resultsURL").value=shareURL;
+				I("testId").innerHTML=testId;
+				I("shareArea").style.display="";
+			}
+		}catch(e){}
+	}
 }
 
 function startStop(){ //start/stop button pressed
 	if(s.getState()==3){
 		//speedtest is running, abort
 		s.abort();
+		I("startStopBtn").className="";
 	}else{
-		//test is not running, begin
-		s.start();
+		//speedtest is not running, begin
 		I("startStopBtn").className="running";
+		I("shareArea").style.display="none";
+		s.start();
 	}
 }
 
@@ -169,7 +185,17 @@ function I(id){return document.getElementById(id);}
 		transition: width 2s;
 		background-color:#90BBFF;
 	}
-
+	#shareArea{
+		width:95%;
+		max-width:500px;
+		margin:0 auto;
+		margin-top:2em;
+	}
+	#shareArea > *{
+		display:block;
+		width:100%;
+		height:auto;
+	}
 </style>
 </head>
 <body>
@@ -181,12 +207,12 @@ function I(id){return document.getElementById(id);}
 		<div class="testArea">
 			<div class="testName">下载速度</div>
 			<div id="dlText" class="meterText"></div>
-			<div class="unit">Mbit/s</div>
+			<div class="unit">Mbps</div>
 		</div>
 		<div class="testArea">
 			<div class="testName">上传速度</div>
 			<div id="ulText" class="meterText"></div>
-			<div class="unit">Mbit/s</div>
+			<div class="unit">Mbps</div>
 		</div>
 	</div>
 	<div class="testGroup">
@@ -203,6 +229,12 @@ function I(id){return document.getElementById(id);}
 	</div>
 	<div id="ipArea">
 		IP 地址: <span id="ip"></span>
+	</div>
+	<div id="shareArea" style="display:none">
+		<h3>内网测速结果</h3>
+		<p>测试 ID: <span id="testId"></span></p>
+		<input type="text" value="" id="resultsURL" readonly="readonly" onclick="this.select();this.focus();this.select();document.execCommand('copy');alert('链接已复制')"/>
+		<img src="" id="resultsImg" />
 	</div>
 </div>
 <a href="https://nic.xjtu.edu.cn" target="_blank" rel="noreferrer">网络信息中心</a> ｜ <a href="https://ana.xjtu.edu.cn" target="_blank" rel="noreferrer">学生网络管理协会</a> ｜ <a href="https://github.com/openana/speedtest-go" target="_blank" rel="noreferrer">源代码</a>
